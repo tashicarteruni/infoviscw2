@@ -9,6 +9,7 @@ fp = "world.shp"
 csv_file = 'population.csv'
 data = 'data.csv'
 
+# fucntion to generate random medal data for each country
 def random_data():
     # Load the original csv file into a panda frame
     df_original = pd.read_csv(csv_file)
@@ -31,3 +32,87 @@ def random_data():
 
     # Save the new panda frame to a new CSV file   
     data_frame.to_csv(data, index=False)
+
+def show_golds():
+    map_df = gpd.read_file(fp)
+
+    df = pd.read_csv(data, header=0)
+    df = df[['Countries', 'Gold Medals']]
+
+    merged = map_df.set_index('COUNTRY').join(df.set_index('Countries'))
+
+    variable = 'Gold Medals'
+
+    vmin, vmax = 0, 100
+
+    fig, ax = plt.subplots(1, figsize=(10, 6))
+
+    merged.plot(column=variable, cmap='Blues', linewidth=0.8, ax=ax, edgecolor='0.8')
+
+    ax.axis('off')
+
+    sm = plt.cm.ScalarMappable(cmap='Blues', norm=plt.Normalize(vmin=vmin, vmax=vmax))
+    sm._A = []
+    cbar = fig.colorbar(sm, ax=ax, format=FuncFormatter(lambda x, _: f'{int(x):,}'))  # Specify the format
+    cbar.set_label("Template", rotation=270, labelpad=15, fontsize=14)
+    cbar.ax.tick_params(labelsize=14)
+
+    plt.show()
+
+def show_silvers():
+    map_df = gpd.read_file(fp)
+
+    df = pd.read_csv(data, header=0)
+    df = df[['Countries', 'Silver Medals']]
+
+    merged = map_df.set_index('COUNTRY').join(df.set_index('Countries'))
+
+    variable = 'Silver Medals'
+
+    vmin, vmax = 0, 100
+
+    fig, ax = plt.subplots(1, figsize=(10, 6))
+
+    merged.plot(column=variable, cmap='Blues', linewidth=0.8, ax=ax, edgecolor='0.8')
+
+    ax.axis('off')
+
+    sm = plt.cm.ScalarMappable(cmap='Blues', norm=plt.Normalize(vmin=vmin, vmax=vmax))
+    sm._A = []
+    cbar = fig.colorbar(sm, ax=ax, format=FuncFormatter(lambda x, _: f'{int(x):,}'))  # Specify the format
+    cbar.set_label("Template", rotation=270, labelpad=15, fontsize=14)
+    cbar.ax.tick_params(labelsize=14)
+
+    plt.show()
+
+def show_bronzes():
+    map_df = gpd.read_file(fp)
+
+    df = pd.read_csv(data, header=0)
+    df = df[['Countries', 'Bronze Medals']]
+
+    merged = map_df.set_index('COUNTRY').join(df.set_index('Countries'))
+
+    variable = 'Bronze Medals'
+
+    vmin, vmax = 0, 100
+
+    fig, ax = plt.subplots(1, figsize=(10, 6))
+
+    merged.plot(column=variable, cmap='Blues', linewidth=0.8, ax=ax, edgecolor='0.8')
+
+    ax.axis('off')
+
+    sm = plt.cm.ScalarMappable(cmap='Blues', norm=plt.Normalize(vmin=vmin, vmax=vmax))
+    sm._A = []
+    cbar = fig.colorbar(sm, ax=ax, format=FuncFormatter(lambda x, _: f'{int(x):,}'))  # Specify the format
+    cbar.set_label("Template", rotation=270, labelpad=15, fontsize=14)
+    cbar.ax.tick_params(labelsize=14)
+
+    plt.show()
+
+if __name__ == "__main__":
+    random_data()
+    show_golds()
+    show_silvers()
+    show_bronzes()
