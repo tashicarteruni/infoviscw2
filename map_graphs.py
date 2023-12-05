@@ -35,17 +35,19 @@ def random_data():
     # Save the new panda frame to a new CSV file   
     data_frame.to_csv(data, index=False)
 
-def show_all_medals():
+def show_graph(variable):
     map_df = gpd.read_file(fp)
 
     df = pd.read_csv(data, header=0)
-    df = df[['Countries', 'All Medals']]
+    df = df[['Countries', variable]]
 
     merged = map_df.set_index('COUNTRY').join(df.set_index('Countries'))
 
-    variable = 'All Medals'
+    variable = variable
 
     vmin, vmax = 0, 300
+    if (variable != 'All Medals'):
+        vmax = 100
 
     fig, ax = plt.subplots(1, figsize=(10, 6))
 
@@ -61,87 +63,10 @@ def show_all_medals():
 
     plt.show()
 
-def show_golds():
-    map_df = gpd.read_file(fp)
-
-    df = pd.read_csv(data, header=0)
-    df = df[['Countries', 'Gold Medals']]
-
-    merged = map_df.set_index('COUNTRY').join(df.set_index('Countries'))
-
-    variable = 'Gold Medals'
-
-    vmin, vmax = 0, 100
-
-    fig, ax = plt.subplots(1, figsize=(10, 6))
-
-    merged.plot(column=variable, cmap='Blues', linewidth=0.8, ax=ax, edgecolor='0.8')
-
-    ax.axis('off')
-
-    sm = plt.cm.ScalarMappable(cmap='Blues', norm=plt.Normalize(vmin=vmin, vmax=vmax))
-    sm._A = []
-    cbar = fig.colorbar(sm, ax=ax, format=FuncFormatter(lambda x, _: f'{int(x):,}'))  # Specify the format
-    cbar.set_label("Amount of medals", rotation=270, labelpad=15, fontsize=14)
-    cbar.ax.tick_params(labelsize=14)
-
-    plt.show()
-
-def show_silvers():
-    map_df = gpd.read_file(fp)
-
-    df = pd.read_csv(data, header=0)
-    df = df[['Countries', 'Silver Medals']]
-
-    merged = map_df.set_index('COUNTRY').join(df.set_index('Countries'))
-
-    variable = 'Silver Medals'
-
-    vmin, vmax = 0, 100
-
-    fig, ax = plt.subplots(1, figsize=(10, 6))
-
-    merged.plot(column=variable, cmap='Blues', linewidth=0.8, ax=ax, edgecolor='0.8')
-
-    ax.axis('off')
-
-    sm = plt.cm.ScalarMappable(cmap='Blues', norm=plt.Normalize(vmin=vmin, vmax=vmax))
-    sm._A = []
-    cbar = fig.colorbar(sm, ax=ax, format=FuncFormatter(lambda x, _: f'{int(x):,}'))  # Specify the format
-    cbar.set_label("Amount of medals", rotation=270, labelpad=15, fontsize=14)
-    cbar.ax.tick_params(labelsize=14)
-
-    plt.show()
-
-def show_bronzes():
-    map_df = gpd.read_file(fp)
-
-    df = pd.read_csv(data, header=0)
-    df = df[['Countries', 'Bronze Medals']]
-
-    merged = map_df.set_index('COUNTRY').join(df.set_index('Countries'))
-
-    variable = 'Bronze Medals'
-
-    vmin, vmax = 0, 100
-
-    fig, ax = plt.subplots(1, figsize=(10, 6))
-
-    merged.plot(column=variable, cmap='Blues', linewidth=0.8, ax=ax, edgecolor='0.8')
-
-    ax.axis('off')
-
-    sm = plt.cm.ScalarMappable(cmap='Blues', norm=plt.Normalize(vmin=vmin, vmax=vmax))
-    sm._A = []
-    cbar = fig.colorbar(sm, ax=ax, format=FuncFormatter(lambda x, _: f'{int(x):,}'))  # Specify the format
-    cbar.set_label("Amount of medals", rotation=270, labelpad=15, fontsize=14)
-    cbar.ax.tick_params(labelsize=14)
-
-    plt.show()
 
 if __name__ == "__main__":
     random_data()
-    show_all_medals()
-    show_golds()
-    show_silvers()
-    show_bronzes()
+    show_graph('All Medals')
+    show_graph('Gold Medals')
+    show_graph('Silver Medals')
+    show_graph('Bronze Medals')
