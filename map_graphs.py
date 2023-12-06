@@ -24,6 +24,11 @@ def random_data():
     total = golds+silver+bronze
     male = np.random.randint(0,total,size=len(df_original))
     female = total-male
+    sprint = np.random.randint(0,10,size=len(df_original))
+    archery = np.random.randint(0,10,size=len(df_original))
+    high_jump = np.random.randint(0,10,size=len(df_original))
+    swimming = np.random.randint(0,10,size=len(df_original))
+    javelin = np.random.randint(0,10,size=len(df_original))
 
     # Create a new panda frame with country name and medal data
     data_frame = pd.DataFrame({
@@ -33,7 +38,13 @@ def random_data():
         'Silver Medals': silver,
         'Bronze Medals': bronze,
         'Male': male,
-        'Female':female
+        'Female':female,
+        '100m Sprint': sprint,
+        'Archery':archery,
+        'High Jump':high_jump,
+        '100m Swimming':swimming,
+        'Javelin': javelin
+
     })
 
     # Save the new panda frame to a new CSV file   
@@ -88,10 +99,39 @@ def top_counties_by_gender():
     # Display 
     plt.show()
 
+def total_medals_by_sport():
+    # Get csv into a panda frame
+    df = pd.read_csv(data, header=0)
+
+    # Sort the DataFrame by total medals and get the top 10 countries
+    top_10_countries = df.nlargest(10, 'All Medals')
+
+    # get colours hexcode
+    sprint = "#26547D"
+    archery = "#EF436B"
+    high_jump = "#FFCE5C"
+    swimming = "#05C793"
+    javelin = "#5C43A9"
+
+    # Plotting the area graph
+    plt.stackplot(top_10_countries['Countries'],top_10_countries['100m Sprint'], top_10_countries['Archery'],
+                  top_10_countries['High Jump'],top_10_countries['100m Swimming'],top_10_countries['Javelin'], 
+                colors=[sprint,archery,high_jump,swimming,javelin],labels=['sprint','archery','high_jump','swimming','javelin'], alpha=0.7)
+    
+    # set labels and title
+    plt.xlabel('Country')
+    plt.ylabel('Number of Medals')
+    plt.title('Top 10 Countries by Total Medals for 5 sports')
+    # Show legend
+    plt.legend()
+    # Display 
+    plt.show()
+
 if __name__ == "__main__":
     random_data()
     top_countries_by_medals()
     top_counties_by_gender()
+    total_medals_by_sport()
     #show_graph('Gold Medals')
     #show_graph('Silver Medals')
     #show_graph('Bronze Medals')
