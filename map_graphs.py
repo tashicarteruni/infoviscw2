@@ -22,6 +22,8 @@ def random_data():
     silver = np.random.randint(0, 100, size=len(df_original))
     bronze = np.random.randint(0, 100, size=len(df_original))
     total = golds+silver+bronze
+    male = np.random.randint(0,total,size=len(df_original))
+    female = total-male
 
     # Create a new panda frame with country name and medal data
     data_frame = pd.DataFrame({
@@ -29,7 +31,9 @@ def random_data():
         'All Medals': total,
         'Gold Medals': golds,
         'Silver Medals': silver,
-        'Bronze Medals': bronze
+        'Bronze Medals': bronze,
+        'Male': male,
+        'Female':female
     })
 
     # Save the new panda frame to a new CSV file   
