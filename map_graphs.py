@@ -23,6 +23,7 @@ def random_data():
     bronze = np.random.randint(0, 100, size=len(df_original))
     total = golds+silver+bronze
     male = np.random.randint(0,total,size=len(df_original))
+    winter_medals = np.random.randint(0, 200, size=len(df_original))
     female = total-male
     sprint = np.random.randint(0,10,size=len(df_original))
     archery = np.random.randint(0,10,size=len(df_original))
@@ -34,6 +35,7 @@ def random_data():
     data_frame = pd.DataFrame({
         'Countries': first_column_values,
         'All Medals': total,
+        'Winter Medals': winter_medals,
         'Gold Medals': golds,
         'Silver Medals': silver,
         'Bronze Medals': bronze,
@@ -127,11 +129,37 @@ def total_medals_by_sport():
     # Display 
     plt.show()
 
+def compare_summer_winter():
+    # Get csv into a panda frame
+    df = pd.read_csv(data, header=0)
+
+    # Sort the DataFrame by total medals and get the top 10 countries
+    top_10_countries = df.nlargest(10, 'All Medals')
+
+    # Get colours hexcode
+    winter = "blue"
+    summer = "green"
+
+    # Plotting the area graph
+    plt.stackplot(top_10_countries['Countries'], top_10_countries['Winter Medals'], top_10_countries['All Medals'], 
+                colors=[winter,summer],labels=['Winter Medals','Summer Medals'], alpha=0.7)
+
+    # set labels and title
+    plt.xlabel('Country')
+    plt.ylabel('Number of Medals')
+    plt.title('Top 10 Countries for Winter Medals and Summer Medals')
+    # Show legend
+    plt.legend()
+    # Display 
+    plt.show()
+
+
 if __name__ == "__main__":
     random_data()
     top_countries_by_medals()
     top_counties_by_gender()
     total_medals_by_sport()
+    compare_summer_winter()
     #show_graph('Gold Medals')
     #show_graph('Silver Medals')
     #show_graph('Bronze Medals')
