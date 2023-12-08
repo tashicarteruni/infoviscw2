@@ -39,7 +39,7 @@ def record_data_to_csv(trial_number, data, countries, years, chart_type, filenam
 
 # Main function
 def main():
-    countries = ["Country A", "Country B", "Country C", "Country D"]
+    countries = ["USA", "China", "UK", "Russia"]
     years = np.arange(2000, 2021, 4)  # Olympic years from 2000 to 2020
     num_trials = 10
 
