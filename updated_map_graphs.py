@@ -155,15 +155,95 @@ def compare_summer_winter():
     plt.show()
 
 
+# Function to generate hypothetical yearly data
+def generate_yearly_data(start_year, end_year, data_points):
+    years = list(range(start_year, end_year + 1))
+    values = np.random.randint(low=0, high=max(data_points) + 1, size=len(years))
+    return years, values
+
+def plot_yearly_medal_count_line_chart(country_name, start_year, end_year):
+    df = pd.read_csv(data, header=0)
+    country_medals = df[df['Countries'] == country_name]['All Medals'].iloc[0]
+    years, country_yearly_medals = generate_yearly_data(start_year, end_year, [country_medals])
+
+    plt.plot(years, country_yearly_medals, color='blue', marker='o')
+    plt.title(f'Yearly Medal Count for {country_name} (Line Chart)')
+    plt.xlabel('Year')
+    plt.ylabel('Medals')
+    plt.show()
+
+def plot_yearly_medal_count_area_chart(country_name, start_year, end_year):
+    df = pd.read_csv(data, header=0)
+    
+    country_medals = df[df['Countries'] == country_name]['All Medals'].iloc[0]
+    years, country_yearly_medals = generate_yearly_data(start_year, end_year, [country_medals])
+    plt.fill_between(years, country_yearly_medals, color='blue', alpha=0.3)
+    plt.title(f'Yearly Medal Count for {country_name} (Area Chart)')
+    plt.xlabel('Year')
+    plt.ylabel('Medals')
+    plt.show()
+
+def plot_sport_medal_count_line_chart(sport, start_year, end_year):
+
+    df = pd.read_csv(data, header=0)
+    sport_medals = df[sport].sum()
+    years, sport_yearly_medals = generate_yearly_data(start_year, end_year, [sport_medals])
+
+    plt.plot(years, sport_yearly_medals, color='green', marker='o')
+    plt.title(f'Medal Counts in {sport} Over Time (Line Chart)')
+    plt.xlabel('Year')
+    plt.ylabel('Medals')
+    plt.show()
+
+def plot_sport_medal_count_area_chart(sport, start_year, end_year):
+
+    df = pd.read_csv(data, header=0)
+    sport_medals = df[sport].sum()
+    years, sport_yearly_medals = generate_yearly_data(start_year, end_year, [sport_medals])
+
+    plt.fill_between(years, sport_yearly_medals, color='green', alpha=0.3)
+    plt.title(f'Medal Counts in {sport} Over Time (Area Chart)')
+    plt.xlabel('Year')
+    plt.ylabel('Medals')
+    plt.show()
+
+def plot_age_distribution_line_chart(start_year, end_year):
+
+    df_age = pd.read_csv(data, header=0)['Age']
+    min_age, max_age = df_age.min(), df_age.max()
+    years, age_yearly_distribution = generate_yearly_data(start_year, end_year, list(range(min_age, max_age + 1)))
+
+    plt.plot(years, age_yearly_distribution, color='red', marker='o')
+    plt.title('Age Distribution of Medalists Over Time (Line Chart)')
+    plt.xlabel('Year')
+    plt.ylabel('Average Age')
+    plt.show()
+
+def plot_age_distribution_area_chart(start_year, end_year):
+
+    df_age = pd.read_csv(data, header=0)['Age']
+    min_age, max_age = df_age.min(), df_age.max()
+    years, age_yearly_distribution = generate_yearly_data(start_year, end_year, list(range(min_age, max_age + 1)))
+
+    plt.fill_between(years, age_yearly_distribution, color='red', alpha=0.3)
+    plt.title('Age Distribution of Medalists Over Time (Area Chart)')
+    plt.xlabel('Year')
+    plt.ylabel('Average Age')
+    plt.show()
+
+
 if __name__ == "__main__":
     random_data()
     top_countries_by_medals()
     top_counties_by_gender()
     total_medals_by_sport()
     compare_summer_winter()
+    plot_yearly_medal_count_line_chart('United Kingdom', 1960, 2020)
+    plot_yearly_medal_count_area_chart('United Kingdom', 1960, 2020)
+    plot_sport_medal_count_line_chart('100m Sprint', 1960, 2020)
+    plot_sport_medal_count_area_chart('100m Sprint', 1960, 2020)
+    plot_age_distribution_line_chart(1960, 2020)
+    plot_age_distribution_area_chart(1960, 2020)
     #show_graph('Gold Medals')
     #show_graph('Silver Medals')
     #show_graph('Bronze Medals')
-
-
-    
