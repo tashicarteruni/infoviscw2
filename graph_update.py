@@ -53,12 +53,12 @@ def next_chart():
     trial += 1
 
     # Check if all trials are completed
-    if trial < num_trials * 2:
+    if trial <= num_trials:
         # Update the 'Next' button text
-        next_button.config(text=f"Next ({current_chart.capitalize()})", state='normal')
+        next_button.config(text=f"Next ({current_chart.capitalize()}) - Chart {trial+1}", state='normal')
         
         # Schedule the 'show_next_chart' function after a 5-second delay
-        root.after(5000, lambda: show_next_chart(medals_data))
+        root.after(1000, lambda: show_next_chart(medals_data))
     else:
         root.destroy()  # Close the Tkinter window when all trials are completed
 
@@ -84,12 +84,12 @@ def main():
 
     countries = ["USA", "China", "UK", "Russia"]
     years = np.arange(2000, 2021, 4)  # Olympic years from 2000 to 2020
-    num_trials = 10
-    trial = 0
+    num_trials = 10  # Total number of trials (5 line charts and 5 area charts)
+    trial = 0  # Start from 1 since the first chart is shown immediately
     current_chart = "area"
 
     # Create the 'Next' button
-    next_button = Button(root, text=f"Next ({current_chart.capitalize()})", command=next_chart)
+    next_button = Button(root, text=f"Next ({current_chart.capitalize()}) - Chart {trial+1}", command=next_chart)
     next_button.pack()
 
     root.mainloop()
