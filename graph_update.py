@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import csv
-from tkinter import Tk, Button
+from tkinter import Tk, Button, Label
 
 # Declare 'root' as a global variable
 root = Tk()
@@ -34,7 +34,7 @@ def plot_chart(data, countries, years, chart_type):
 
 # Callback function for the 'Next' button
 def next_chart():
-    global current_chart, trial, num_trials  # Add 'root' to the global variables
+    global current_chart, trial, num_trials, chart_label  # Add 'root' to the global variables
 
     # Close the current chart if there is one
     if current_fig:
@@ -55,8 +55,11 @@ def next_chart():
     # Check if all trials are completed
     if trial <= num_trials:
         # Update the 'Next' button text
-        next_button.config(text=f"Next ({current_chart.capitalize()}) - Chart {trial+1}", state='normal')
+        next_button.config(text=f"Next ({current_chart.capitalize()})", state='normal')
         
+        # Update the chart label
+        chart_label.config(text=f"Chart {trial+1}/{num_trials}")
+
         # Schedule the 'show_next_chart' function after a 5-second delay
         root.after(1000, lambda: show_next_chart(medals_data))
     else:
@@ -80,7 +83,7 @@ def record_data_to_csv(trial_number, data, countries, years, chart_type, filenam
             writer.writerow(row)
 
 def main():
-    global countries, years, current_chart, trial, num_trials, next_button
+    global countries, years, current_chart, trial, num_trials, next_button, chart_label
 
     countries = ["USA", "China", "UK", "Russia"]
     years = np.arange(2000, 2021, 4)  # Olympic years from 2000 to 2020
@@ -88,9 +91,16 @@ def main():
     trial = 0  # Start from 1 since the first chart is shown immediately
     current_chart = "area"
 
+    # Set the initial size of the Tkinter window
+    root.geometry("400x200")
+
     # Create the 'Next' button
-    next_button = Button(root, text=f"Next ({current_chart.capitalize()}) - Chart {trial+1}", command=next_chart)
+    next_button = Button(root, text=f"Next ({current_chart.capitalize()})", command=next_chart)
     next_button.pack()
+
+    # Create a label for the chart number
+    chart_label = Label(root, text=f"Chart {trial+1}/{num_trials}")
+    chart_label.pack()
 
     root.mainloop()
 
