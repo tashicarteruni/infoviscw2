@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import csv
-from tkinter import Tk, Button, Label, Entry
+from tkinter import Tk, Button, Label, StringVar, Radiobutton
 
 # Declare 'root' as a global variable
 root = Tk()
@@ -34,21 +34,19 @@ def plot_chart(data, countries, years, chart_type):
 
 # Callback function for the 'Next' button
 def next_chart():
-    global current_chart, trial, num_trials, chart_label, user_input_entry, medals_data, question_label, answer_label  # Add 'root' to the global variables
+    global current_chart, trial, num_trials, chart_label, user_choice, medals_data, question_label, answer_label  # Add 'root' to the global variables
 
     # Close the current chart if there is one
     if current_fig:
         plt.close(current_fig)
 
-    # Retrieve user input
-    user_input = user_input_entry.get()
-
-    # Check if the user's answer is correct
-    correct_answer = check_answer(user_input, current_chart)
+    # Check user's answer
+    user_answer = user_choice.get()
+    correct_answer = check_answer(user_answer, current_chart)
 
     # Record data for the previous chart type
     if trial > 0:
-        record_data_to_csv(trial - 1, medals_data, countries, years, current_chart, user_input, correct_answer)
+        record_data_to_csv(trial - 1, medals_data, countries, years, current_chart, user_answer, correct_answer)
 
     # Move to the next chart type (cycle between 'area' and 'line')
     current_chart = "line" if current_chart == "area" else "area"
@@ -67,14 +65,14 @@ def next_chart():
         # Update the question label
         question_label.config(text=f"Question: What type of chart is this?")
 
-        # Clear the user input field
-        user_input_entry.delete(0, 'end')
+        # Clear user's choice
+        user_choice.set("")
 
         # Generate random medals data for the next trial
         medals_data = generate_medals_data(countries, years)
 
-        # Schedule the 'show_next_chart' function after a 5-second delay
-        root.after(1000, lambda: show_next_chart(medals_data))
+        # Schedule the 'show_next_chart' function after a 3-second delay
+        root.after(3000, lambda: show_next_chart(medals_data))
     else:
         root.destroy()  # Close the Tkinter window when all trials are completed
 
@@ -84,23 +82,23 @@ def show_next_chart(prev_medals_data):
     plot_chart(prev_medals_data, countries, years, current_chart)
 
 # Function to record data to a CSV file, including user input and correctness
-def record_data_to_csv(trial_number, data, countries, years, chart_type, user_input, correct_answer, filename="experiment_data.csv"):
+def record_data_to_csv(trial_number, data, countries, years, chart_type, user_answer, correct_answer, filename="experiment_data.csv"):
     with open(filename, 'a', newline='') as file:
         writer = csv.writer(file)
         if trial_number == 0:  # Write header only for the first trial
-            header = ['Trial Number', 'Chart Type', 'User Input', 'Correct Answer'] + [f'{country}_{year}' for country in countries for year in years]
+            header = ['Trial Number', 'Chart Type', 'User Answer', 'Question Answered Correctly'] + [f'{country}_{year}' for country in countries for year in years]
             writer.writerow(header)
 
         # Concatenate data for all countries into a single row
-        row = [trial_number, chart_type, user_input, correct_answer] + [item for sublist in data for item in sublist]
+        row = [trial_number, chart_type, user_answer, correct_answer] + [item for sublist in data for item in sublist]
         writer.writerow(row)
 
 # Function to check if the user's answer is correct
 def check_answer(user_answer, correct_chart_type):
-    return user_answer.lower() == correct_chart_type
+    return user_answer.lower() == correct_chart_type.lower()
 
 def main():
-    global countries, years, current_chart, trial, num_trials, next_button, chart_label, user_input_entry, medals_data, question_label, answer_label
+    global countries, years, current_chart, trial, num_trials, next_button, chart_label, user_choice, medals_data, question_label, answer_label
 
     countries = ["USA", "China", "UK", "Russia"]
     years = np.arange(2000, 2021, 4)  # Olympic years from 2000 to 2020
@@ -123,9 +121,12 @@ def main():
     question_label = Label(root, text=f"Question: What type of chart is this?")
     question_label.pack()
 
-    # Create an Entry widget for user input
-    user_input_entry = Entry(root)
-    user_input_entry.pack()
+    # Create radio buttons for user's choice
+    user_choice = StringVar()
+    option1 = Radiobutton(root, text="Area Chart", variable=user_choice, value="area")
+    option2 = Radiobutton(root, text="Line Chart", variable=user_choice, value="line")
+    option1.pack()
+    option2.pack()
 
     # Initialize medals_data for the first trial
     medals_data = generate_medals_data(countries, years)
