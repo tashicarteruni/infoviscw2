@@ -412,7 +412,7 @@ def medals_by_continent_area():
 
 
 if __name__ == "__main__":
-    random_data()
+    # random_data()
     top_countries_by_medals_line()
     top_countries_by_medals_area()
     top_counties_by_gender_line()
