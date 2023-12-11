@@ -1,3 +1,4 @@
+import os
 import matplotlib.pyplot as plt
 import numpy as np
 import csv
@@ -17,6 +18,7 @@ elapsed_time = 0  # Initialize elapsed_time
 
 # Function to generate random data
 def generate_medals_data(countries, years):
+    
     return np.random.randint(0, 100, size=(len(countries), len(years)))
 
 # Function to plot chart
@@ -57,7 +59,8 @@ def next_chart():
 
     # Check user's answer
     user_answer = user_choice.get()
-    correct_answer = check_answer(user_answer, current_chart)
+    correct_answer = find_highest_medals_country(medals_data, countries, years)
+
 
     # Record data for the previous chart type
     if trial > 0:
@@ -78,7 +81,7 @@ def next_chart():
         chart_label.config(text=f"Current Chart: {trial}")
 
         # Update the question label
-        question_label.config(text=f"Question: What type of chart is this?")
+        question_label.config(text=f"Question: Which Country has the highest number of Medals in 2012?")
 
         # Clear user's choice
         user_choice.set("")
@@ -101,9 +104,18 @@ def show_next_chart(prev_medals_data):
 
 # Function to record data to a CSV file, including user input, correctness, and time taken
 def record_data_to_csv(trial_number, data, countries, years, chart_type, user_answer, correct_answer, elapsed_time, filename="experiment_data.csv"):
+    # Check if the file exists and is not empty
+    file_exists = os.path.isfile(filename) and os.path.getsize(filename) > 0
+
     with open(filename, 'a', newline='') as file:
         writer = csv.writer(file)
-        if trial_number == 1:  # Write header only for the first trial
+
+        # If the file exists and is not empty, write a blank line
+        if file_exists and trial_number == 1:
+            writer.writerow([])
+
+        # Write header only for the first trial
+        if trial_number == 1:
             header = ['Trial Number', 'Chart Type', 'User Answer', 'Question Answered Correctly', 'Time Taken (seconds)'] + [f'{country}_{year}' for country in countries for year in years]
             writer.writerow(header)
 
@@ -111,16 +123,29 @@ def record_data_to_csv(trial_number, data, countries, years, chart_type, user_an
         row = [trial_number, chart_type, user_answer, correct_answer, elapsed_time] + [item for sublist in data for item in sublist]
         writer.writerow(row)
 
+
 # Function to check if the user's answer is correct
 def check_answer(user_answer, correct_chart_type):
     return user_answer.lower() == correct_chart_type.lower()
 
+# Function to check the highest medals for each trail
+def find_highest_medals_country(medals_data, countries, years):
+    # Converting 'years' to a list to use the 'index' method
+    years_list = list(years)
+    index_2012 = years_list.index(2012)
+    medals_2012 = medals_data[:, index_2012]
+    max_medals_index = np.argmax(medals_2012)
+    return countries[max_medals_index]
+
+
 def main():
     global countries, years, current_chart, trial, num_trials, next_button, chart_label, user_choice, medals_data, question_label, elapsed_label, timer_label
 
+    np.random.seed(100)
+
     countries = ["USA", "China", "UK", "Russia"]
     years = np.arange(2000, 2021, 4)  # Olympic years from 2000 to 2020
-    num_trials = 10  # Total number of trials (5 line charts and 5 area charts)
+    num_trials = 20  # Total number of trials (5 line charts and 5 area charts)
     trial = 0  # Start from 1 since the first chart is shown immediately
     current_chart = "area"
 
@@ -136,15 +161,19 @@ def main():
     chart_label.pack()
 
     # Create a label for the question
-    question_label = ttk.Label(root, text=f"Question: What type of chart is this?")
+    question_label = ttk.Label(root, text=f"Question: Which Country has the highest number of Medals in 2012?")
     question_label.pack()
 
     # Create radio buttons for user's choice
     user_choice = StringVar()
-    option1 = ttk.Radiobutton(root, text="Area Chart", variable=user_choice, value="area")
-    option2 = ttk.Radiobutton(root, text="Line Chart", variable=user_choice, value="line")
+    option1 = ttk.Radiobutton(root, text="USA", variable=user_choice, value="USA")
+    option2 = ttk.Radiobutton(root, text="China", variable=user_choice, value="China")
+    option3 = ttk.Radiobutton(root, text="UK", variable=user_choice, value="UK")
+    option4 = ttk.Radiobutton(root, text="Russia", variable=user_choice, value="Russia")
     option1.pack()
     option2.pack()
+    option3.pack()
+    option4.pack()
 
     # Create a label for elapsed time
     elapsed_label = ttk.Label(root, text="")
