@@ -125,7 +125,7 @@ def main():
     current_chart = "area"
 
     # Set the initial size of the Tkinter window
-    root.geometry("500x500")
+    root.geometry("500x200")
 
     # Create the 'Next' button
     next_button = ttk.Button(root, text=f"See Next Chart", command=next_chart)
