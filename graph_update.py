@@ -34,17 +34,18 @@ def plot_chart(data, countries, years, chart_type):
 
 # Callback function for the 'Next' button
 def next_chart():
-    global current_chart, trial, num_trials, chart_label, user_input_entry  # Add 'root' to the global variables
+    global current_chart, trial, num_trials, chart_label, user_input_entry, medals_data  # Add 'root' to the global variables
 
     # Close the current chart if there is one
     if current_fig:
         plt.close(current_fig)
 
-    # Generate random medals data for each trial
-    medals_data = generate_medals_data(countries, years)
+    # Retrieve user input
+    user_input = user_input_entry.get()
 
-    # Record data for the current chart type
-    record_data_to_csv(trial, medals_data, countries, years, current_chart)
+    # Record data for the previous chart type
+    if trial > 0:
+        record_data_to_csv(trial - 1, medals_data, countries, years, current_chart, user_input)
 
     # Move to the next chart type (cycle between 'area' and 'line')
     current_chart = "line" if current_chart == "area" else "area"
@@ -63,6 +64,9 @@ def next_chart():
         # Clear the user input field
         user_input_entry.delete(0, 'end')
 
+        # Generate random medals data for the next trial
+        medals_data = generate_medals_data(countries, years)
+
         # Schedule the 'show_next_chart' function after a 5-second delay
         root.after(1000, lambda: show_next_chart(medals_data))
     else:
@@ -74,20 +78,19 @@ def show_next_chart(prev_medals_data):
     plot_chart(prev_medals_data, countries, years, current_chart)
 
 # Function to record data to a CSV file, including user input
-def record_data_to_csv(trial_number, data, countries, years, chart_type, filename="experiment_data.csv"):
-    user_input = user_input_entry.get()  # Get user input from the Entry widget
+def record_data_to_csv(trial_number, data, countries, years, chart_type, user_input, filename="experiment_data.csv"):
     with open(filename, 'a', newline='') as file:
         writer = csv.writer(file)
         if trial_number == 0:  # Write header only for the first trial
             header = ['Trial Number', 'Chart Type', 'User Input'] + [f'{country}_{year}' for country in countries for year in years]
             writer.writerow(header)
-        
-        for country_index, country in enumerate(countries):
-            row = [trial_number, chart_type, user_input] + [data[country_index][year_index] for year_index in range(len(years))]
-            writer.writerow(row)
+
+        # Concatenate data for all countries into a single row
+        row = [trial_number, chart_type, user_input] + [item for sublist in data for item in sublist]
+        writer.writerow(row)
 
 def main():
-    global countries, years, current_chart, trial, num_trials, next_button, chart_label, user_input_entry
+    global countries, years, current_chart, trial, num_trials, next_button, chart_label, user_input_entry, medals_data
 
     countries = ["USA", "China", "UK", "Russia"]
     years = np.arange(2000, 2021, 4)  # Olympic years from 2000 to 2020
@@ -96,7 +99,7 @@ def main():
     current_chart = "area"
 
     # Set the initial size of the Tkinter window
-    root.geometry("400x250")
+    root.geometry("400x300")
 
     # Create the 'Next' button
     next_button = Button(root, text=f"See Next Chart ({current_chart.capitalize()})", command=next_chart)
@@ -109,6 +112,9 @@ def main():
     # Create an Entry widget for user input
     user_input_entry = Entry(root)
     user_input_entry.pack()
+
+    # Initialize medals_data for the first trial
+    medals_data = generate_medals_data(countries, years)
 
     root.mainloop()
 
