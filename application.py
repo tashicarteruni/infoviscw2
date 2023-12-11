@@ -1,10 +1,13 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import csv
-from tkinter import Tk, Button, Label, StringVar, Radiobutton
+
+from tkinter import *
+from tkinter import Tk, Button, Label, StringVar, Radiobutton, ttk
+from ttkthemes import ThemedTk
 
 # Declare 'root' as a global variable
-root = Tk()
+root = ThemedTk(theme="Breeze")
 
 # Declare 'current_fig' as a global variable to keep track of the current figure
 current_fig = None
@@ -110,21 +113,21 @@ def main():
     root.geometry("400x400")
 
     # Create the 'Next' button
-    next_button = Button(root, text=f"See Next Chart ({current_chart.capitalize()})", command=next_chart)
+    next_button = ttk.Button(root, text=f"See Next Chart ({current_chart.capitalize()})", command=next_chart)
     next_button.pack()
 
     # Create a label for the chart number
-    chart_label = Label(root, text=f"Current Chart: {trial}")
+    chart_label = ttk.Label(root, text=f"Current Chart: {trial}")
     chart_label.pack()
 
     # Create a label for the question
-    question_label = Label(root, text=f"Question: What type of chart is this?")
+    question_label = ttk.Label(root, text=f"Question: What type of chart is this?")
     question_label.pack()
 
     # Create radio buttons for user's choice
     user_choice = StringVar()
-    option1 = Radiobutton(root, text="Area Chart", variable=user_choice, value="area")
-    option2 = Radiobutton(root, text="Line Chart", variable=user_choice, value="line")
+    option1 = ttk.Radiobutton(root, text="Area Chart", variable=user_choice, value="area")
+    option2 = ttk.Radiobutton(root, text="Line Chart", variable=user_choice, value="line")
     option1.pack()
     option2.pack()
 
