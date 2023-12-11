@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import csv
+import time
 
 from tkinter import *
 from tkinter import Tk, Button, Label, StringVar, Radiobutton, ttk
@@ -11,6 +12,8 @@ root = ThemedTk(theme="Breeze")
 
 # Declare 'current_fig' as a global variable to keep track of the current figure
 current_fig = None
+start_time = None  # Initialize start_time
+elapsed_time = 0  # Initialize elapsed_time
 
 # Function to generate random data
 def generate_medals_data(countries, years):
@@ -37,11 +40,20 @@ def plot_chart(data, countries, years, chart_type):
 
 # Callback function for the 'Next' button
 def next_chart():
-    global current_chart, trial, num_trials, chart_label, user_choice, medals_data, question_label, answer_label  # Add 'root' to the global variables
+    global current_chart, trial, num_trials, chart_label, user_choice, medals_data, question_label, elapsed_label, timer_label  # Add 'root' to the global variables
+    global start_time, elapsed_time  # Update global variables
 
     # Close the current chart if there is one
     if current_fig:
         plt.close(current_fig)
+
+    # Record start time only at the beginning of the trial
+    if trial == 0:
+        start_time = time.time()
+
+    # Update elapsed time
+    elapsed_time = time.time() - start_time - 3  # Subtract 3 seconds for the delay
+    elapsed_label.config(text=f"You took {round(elapsed_time, 2)} seconds to answer the question!")
 
     # Check user's answer
     user_answer = user_choice.get()
@@ -49,7 +61,7 @@ def next_chart():
 
     # Record data for the previous chart type
     if trial > 0:
-        record_data_to_csv(trial, medals_data, countries, years, current_chart, user_answer, correct_answer)
+        record_data_to_csv(trial, medals_data, countries, years, current_chart, user_answer, correct_answer, elapsed_time)
 
     # Move to the next chart type (cycle between 'area' and 'line')
     current_chart = "line" if current_chart == "area" else "area"
@@ -74,6 +86,9 @@ def next_chart():
         # Generate random medals data for the next trial
         medals_data = generate_medals_data(countries, years)
 
+        # Reset start time for the next trial
+        start_time = time.time()
+
         # Schedule the 'show_next_chart' function after a 3-second delay
         root.after(3000, lambda: show_next_chart(medals_data))
     else:
@@ -84,16 +99,16 @@ def show_next_chart(prev_medals_data):
     # Plot the current chart type
     plot_chart(prev_medals_data, countries, years, current_chart)
 
-# Function to record data to a CSV file, including user input and correctness
-def record_data_to_csv(trial_number, data, countries, years, chart_type, user_answer, correct_answer, filename="experiment_data.csv"):
+# Function to record data to a CSV file, including user input, correctness, and time taken
+def record_data_to_csv(trial_number, data, countries, years, chart_type, user_answer, correct_answer, elapsed_time, filename="experiment_data.csv"):
     with open(filename, 'a', newline='') as file:
         writer = csv.writer(file)
         if trial_number == 1:  # Write header only for the first trial
-            header = ['Trial Number', 'Chart Type', 'User Answer', 'Question Answered Correctly'] + [f'{country}_{year}' for country in countries for year in years]
+            header = ['Trial Number', 'Chart Type', 'User Answer', 'Question Answered Correctly', 'Time Taken (seconds)'] + [f'{country}_{year}' for country in countries for year in years]
             writer.writerow(header)
 
         # Concatenate data for all countries into a single row
-        row = [trial_number, chart_type, user_answer, correct_answer] + [item for sublist in data for item in sublist]
+        row = [trial_number, chart_type, user_answer, correct_answer, elapsed_time] + [item for sublist in data for item in sublist]
         writer.writerow(row)
 
 # Function to check if the user's answer is correct
@@ -101,7 +116,7 @@ def check_answer(user_answer, correct_chart_type):
     return user_answer.lower() == correct_chart_type.lower()
 
 def main():
-    global countries, years, current_chart, trial, num_trials, next_button, chart_label, user_choice, medals_data, question_label, answer_label
+    global countries, years, current_chart, trial, num_trials, next_button, chart_label, user_choice, medals_data, question_label, elapsed_label, timer_label
 
     countries = ["USA", "China", "UK", "Russia"]
     years = np.arange(2000, 2021, 4)  # Olympic years from 2000 to 2020
@@ -110,7 +125,7 @@ def main():
     current_chart = "area"
 
     # Set the initial size of the Tkinter window
-    root.geometry("400x400")
+    root.geometry("500x500")
 
     # Create the 'Next' button
     next_button = ttk.Button(root, text=f"See Next Chart", command=next_chart)
@@ -131,7 +146,11 @@ def main():
     option1.pack()
     option2.pack()
 
-   # Initialize medals_data for the first trial
+    # Create a label for elapsed time
+    elapsed_label = ttk.Label(root, text="")
+    elapsed_label.pack()
+
+    # Initialize medals_data for the first trial
     medals_data = generate_medals_data(countries, years)
 
     # Show the first chart straight away
