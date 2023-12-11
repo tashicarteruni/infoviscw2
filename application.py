@@ -16,6 +16,8 @@ current_fig = None
 start_time = None  # Initialize start_time
 elapsed_time = 0  # Initialize elapsed_time
 
+current_experiment_filename = None
+
 # Function to generate random data
 def generate_medals_data(countries, years):
     
@@ -102,17 +104,29 @@ def show_next_chart(prev_medals_data):
     # Plot the current chart type
     plot_chart(prev_medals_data, countries, years, current_chart)
 
-# Function to record data to a CSV file, including user input, correctness, and time taken
-def record_data_to_csv(trial_number, data, countries, years, chart_type, user_answer, correct_answer, elapsed_time, filename="experiment_data.csv"):
-    # Check if the file exists and is not empty
-    file_exists = os.path.isfile(filename) and os.path.getsize(filename) > 0
+def initialize_experiment():
+    """
+    Function to initialize the experiment by setting the correct filename.
+    """
+    global current_experiment_filename
+    current_experiment_filename = get_next_filename()
 
-    with open(filename, 'a', newline='') as file:
+def get_next_filename(base_filename="experiment_data"):
+    """
+    Function to generate the next filename based on existing files.
+    """
+    i = 1
+    while True:
+        filename = f"{base_filename}_{i}.csv"
+        if not os.path.exists(filename):
+            return filename
+        i += 1
+
+def record_data_to_csv(trial_number, data, countries, years, chart_type, user_answer, correct_answer, elapsed_time):
+    global current_experiment_filename
+
+    with open(current_experiment_filename, 'a', newline='') as file:
         writer = csv.writer(file)
-
-        # If the file exists and is not empty, write a blank line
-        if file_exists and trial_number == 1:
-            writer.writerow([])
 
         # Write header only for the first trial
         if trial_number == 1:
@@ -122,6 +136,7 @@ def record_data_to_csv(trial_number, data, countries, years, chart_type, user_an
         # Concatenate data for all countries into a single row
         row = [trial_number, chart_type, user_answer, correct_answer, elapsed_time] + [item for sublist in data for item in sublist]
         writer.writerow(row)
+
 
 
 # Function to check if the user's answer is correct
@@ -141,6 +156,7 @@ def find_highest_medals_country(medals_data, countries, years):
 def main():
     global countries, years, current_chart, trial, num_trials, next_button, chart_label, user_choice, medals_data, question_label, elapsed_label, timer_label
 
+    initialize_experiment()
     np.random.seed(100)
 
     countries = ["USA", "China", "UK", "Russia"]
