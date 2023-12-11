@@ -49,7 +49,7 @@ def next_chart():
 
     # Record data for the previous chart type
     if trial > 0:
-        record_data_to_csv(trial - 1, medals_data, countries, years, current_chart, user_answer, correct_answer)
+        record_data_to_csv(trial, medals_data, countries, years, current_chart, user_answer, correct_answer)
 
     # Move to the next chart type (cycle between 'area' and 'line')
     current_chart = "line" if current_chart == "area" else "area"
@@ -60,7 +60,7 @@ def next_chart():
     # Check if all trials are completed
     if trial <= num_trials:
         # Update the 'Next' button text
-        next_button.config(text=f"See Next Chart ({current_chart.capitalize()})", state='normal')
+        next_button.config(text=f"See Next Chart", state='normal')
         
         # Update the chart label
         chart_label.config(text=f"Current Chart: {trial}")
@@ -88,7 +88,7 @@ def show_next_chart(prev_medals_data):
 def record_data_to_csv(trial_number, data, countries, years, chart_type, user_answer, correct_answer, filename="experiment_data.csv"):
     with open(filename, 'a', newline='') as file:
         writer = csv.writer(file)
-        if trial_number == 0:  # Write header only for the first trial
+        if trial_number == 1:  # Write header only for the first trial
             header = ['Trial Number', 'Chart Type', 'User Answer', 'Question Answered Correctly'] + [f'{country}_{year}' for country in countries for year in years]
             writer.writerow(header)
 
@@ -113,7 +113,7 @@ def main():
     root.geometry("400x400")
 
     # Create the 'Next' button
-    next_button = ttk.Button(root, text=f"See Next Chart ({current_chart.capitalize()})", command=next_chart)
+    next_button = ttk.Button(root, text=f"See Next Chart", command=next_chart)
     next_button.pack()
 
     # Create a label for the chart number
@@ -131,8 +131,11 @@ def main():
     option1.pack()
     option2.pack()
 
-    # Initialize medals_data for the first trial
+   # Initialize medals_data for the first trial
     medals_data = generate_medals_data(countries, years)
+
+    # Show the first chart straight away
+    next_chart()
 
     root.mainloop()
 
