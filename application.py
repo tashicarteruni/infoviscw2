@@ -49,8 +49,8 @@ multiple_choice_list = [
     ["USA", "China", "UK", "Russia", "All", "None"],
     ["USA", "China", "UK", "Russia", "All", "None"],
     ["USA", "China", "UK", "Russia", "All", "None"],
-    [1, 2, 3, 4, 5, 6], 
-    [1, 2, 3, 4, 5, 6], 
+    [20, 40 , 30 , 27, 37, 47], 
+    [12, 22, 34, 54, 65, 72], 
     [10, 20, 50, 12, 6, 16], 
     [10, 22, 30, 8, 6, 34], 
     ["USA", "China", "UK", "Russia", "All", "None"], 
@@ -59,9 +59,8 @@ multiple_choice_list = [
     [2000, 2004, 2008, 2012, 2016, 2020], 
     [0, 1, 2, 3, 4, 5], 
     [0, 1, 2, 3, 4, 5], 
-    
-    ["USA", "China", "UK", "Russia", "All", "None"], 
-    ["USA", "China", "UK", "Russia", "All", "None"], 
+    [50, 62, 23, 88, 127, 200],
+    [200, 140, 80, 124, 160, 300],
     [0, 1, 2, 3, 4, 5], 
     [0, 1, 2, 3, 4, 5], 
 ]
@@ -242,9 +241,9 @@ def find_different_medals_country(medals_data, countries, years):
     years_list = list(years)
     index_2012 = years_list.index(2012)
     medals_2012 = medals_data[:, index_2012]
-    max_medals_index = np.argmax(medals_2012)
-    min_medals_index = np.argmin(medals_2012)
-    return max_medals_index - min_medals_index
+    max_medals_2012 = max(medals_2012)
+    min_medals_2012 = min(medals_2012)
+    return max_medals_2012 - min_medals_2012
 
 def find_china_medals_2000(medals_data, countries, years):
     countries_list = list(countries)
