@@ -40,7 +40,7 @@ def plot_chart(data, countries, years, chart_type):
     plt.xlabel("Year")
     plt.ylabel("Number of Medals")
     plt.xticks(years)
-    plt.show()
+    plt.show(block = False)
 
 # Callback function for the 'Next' button
 def next_chart():
@@ -56,7 +56,7 @@ def next_chart():
         start_time = time.time()
 
     # Update elapsed time
-    elapsed_time = time.time() - start_time - 3  # Subtract 3 seconds for the delay
+    elapsed_time = time.time() - start_time - 1  # Subtract 1 seconds for the delay
     elapsed_label.config(text=f"You took {round(elapsed_time, 2)} seconds to answer the question!")
 
     # Check user's answer
@@ -95,7 +95,7 @@ def next_chart():
         start_time = time.time()
 
         # Schedule the 'show_next_chart' function after a 3-second delay
-        root.after(3000, lambda: show_next_chart(medals_data))
+        root.after(1000, lambda: show_next_chart(medals_data))
     else:
         root.destroy()  # Close the Tkinter window when all trials are completed
 
@@ -124,17 +124,21 @@ def get_next_filename(base_filename="experiment_data"):
 
 def record_data_to_csv(trial_number, data, countries, years, chart_type, user_answer, correct_answer, elapsed_time):
     global current_experiment_filename
-
+    result = ''
     with open(current_experiment_filename, 'a', newline='') as file:
         writer = csv.writer(file)
 
         # Write header only for the first trial
         if trial_number == 1:
-            header = ['Trial Number', 'Chart Type', 'User Answer', 'Question Answered Correctly', 'Time Taken (seconds)'] + [f'{country}_{year}' for country in countries for year in years]
+            header = ['Trial Number', 'Chart Type', 'User Answer', 'Question Answered Correctly','Result', 'Time Taken (seconds)'] + [f'{country}_{year}' for country in countries for year in years]
             writer.writerow(header)
 
+        if user_answer == correct_answer:
+            result = 'True'
+        else:
+            result = 'False'
         # Concatenate data for all countries into a single row
-        row = [trial_number, chart_type, user_answer, correct_answer, elapsed_time] + [item for sublist in data for item in sublist]
+        row = [trial_number, chart_type, user_answer, correct_answer, result, elapsed_time] + [item for sublist in data for item in sublist]
         writer.writerow(row)
 
 
