@@ -36,7 +36,7 @@ def analyze_data(base_filepath, num_files):
 
 def main():
     base_filepath = 'experiment_data' # Replace with your file path
-    num_files = 2
+    num_files = 11
 
     ttests, error_ratios, chi2_tests = analyze_data(base_filepath, num_files)
 
