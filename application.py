@@ -51,18 +51,19 @@ multiple_choice_list = [
     ["USA", "China", "UK", "Russia", "All", "None"],
     [1, 2, 3, 4, 5, 6], 
     [1, 2, 3, 4, 5, 6], 
-    [10, 22, 50, 12, 6], 
-    [10, 22, 50, 12, 6], 
+    [10, 20, 50, 12, 6, 16], 
+    [10, 22, 30, 8, 6, 34], 
     ["USA", "China", "UK", "Russia", "All", "None"], 
     ["USA", "China", "UK", "Russia", "All", "None"], 
     [2000, 2004, 2008, 2012, 2016, 2020], 
     [2000, 2004, 2008, 2012, 2016, 2020], 
-    [1, 2, 3, 4, 5, 6], 
-    [1, 2, 3, 4, 5, 6], 
-    [30, 90, 45, 2, 5], 
-    [30, 90, 45, 2, 5], 
+    [0, 1, 2, 3, 4, 5], 
+    [0, 1, 2, 3, 4, 5], 
+    
     ["USA", "China", "UK", "Russia", "All", "None"], 
     ["USA", "China", "UK", "Russia", "All", "None"], 
+    [0, 1, 2, 3, 4, 5], 
+    [0, 1, 2, 3, 4, 5], 
 ]
 # Function to generate random data
 def generate_medals_data(countries, years):
@@ -116,7 +117,6 @@ def next_chart():
         correct_answer = find_different_medals_country(medals_data, countries, years)
     elif trial == 9 or trial == 10:
         correct_answer = find_china_medals_2000(medals_data, countries, years)
-        multiple_choice_list[trial].append(correct_answer)
     elif trial == 11 or trial == 12:
         correct_answer = find_lowest_medals_country_2004(medals_data, countries, years)
     elif trial == 13 or trial == 14:
@@ -125,16 +125,14 @@ def next_chart():
         correct_answer = above_50_medals_2020(medals_data, countries, years)
     elif trial == 17 or trial == 18:
         correct_answer = medals_russia_2004_2008(medals_data, countries, years)
-        multiple_choice_list[trial].append(correct_answer)
     elif trial == 19 or trial == 20:
         correct_answer = below_50_medals_2020(medals_data, countries, years)
-
+    
     # Record data for the previous chart type
-    if trial > 0:
+    if trial > 0 and trial < 21:
         record_data_to_csv(trial, medals_data, countries, years, current_chart, user_answer, correct_answer, elapsed_time)
 
-    for i in range(len(multiple_choice_list[trial])):
-            options[i].config(text=f"{multiple_choice_list[trial][i]}", value=f"{multiple_choice_list[trial][i]}")
+    
     # Generate random medals data for the next trial
     
     # Move to the next chart type (cycle between 'area' and 'line')
@@ -157,6 +155,8 @@ def next_chart():
         # Clear user's choice
         user_choice.set("")
 
+        for i in range(len(multiple_choice_list[trial -1])):
+            options[i].config(text=f"{multiple_choice_list[trial - 1][i]}", value=f"{multiple_choice_list[trial -1][i]}")
 
         medals_data = generate_medals_data(countries, years)
 
@@ -336,6 +336,7 @@ def main():
     # Create a label for elapsed time
     elapsed_label = ttk.Label(root, text="")
     elapsed_label.pack()
+
 
     # Initialize medals_data for the first trial
     medals_data = generate_medals_data(countries, years)
