@@ -18,9 +18,54 @@ elapsed_time = 0  # Initialize elapsed_time
 
 current_experiment_filename = None
 
+question_list= [
+    'Which country had the highest number of medals in year 2012',
+    'Which country had the highest number of medals in year 2012',
+    'Which country had the lowest number of medals in year 2012?',
+    'Which country had the lowest number of medals in year 2012?',
+    'Which country had the highest overall number of medals?',
+    'Which country had the highest overall number of medals?',
+    'How much difference in medals are there between the best and worst country in the year 2012',
+    'How much difference in medals are there between the best and worst country in the year 2012',
+    'How many medals did China win in 2000?',
+    'How many medals did China win in 2000?',
+    'Which country had the least number of medals in 2004?',
+    'Which country had the least number of medals in 2004?',
+    'Which year did the USA have its lowest medal count?',
+    'Which year did the USA have its lowest medal count?',
+    'How many countries had above 50 medals in 2020?',
+    'How many countries had above 50 medals in 2020?',
+    'what is the total number of medals won by Russia in 2004 and 2008 combined?',
+    'what is the total number of medals won by Russia in 2004 and 2008 combined?',
+    'How many countries had below 50 medals in 2002?',
+    'How many countries had below 50 medals in 2002?',
+]
+
+#  2000 - 2020 , ["USA", "China", "UK", "Russia"]
+multiple_choice_list = [
+    ["USA", "China", "UK", "Russia"], 
+    ["USA", "China", "UK", "Russia"], 
+    ["USA", "China", "UK", "Russia"], 
+    ["USA", "China", "UK", "Russia"], 
+    ["USA", "China", "UK", "Russia"], 
+    ["USA", "China", "UK", "Russia"], 
+    [1, 2, 3, 4 ], 
+    [], 
+    [], 
+    [], 
+    ["USA", "China", "UK", "Russia"], 
+    ["USA", "China", "UK", "Russia"], 
+    [2000, 2004, 2008, 2012, 2016, 2020], 
+    [2000, 2004, 2008, 2012, 2016, 2020], 
+    [1, 2, 3, 4], 
+    [1, 2, 3, 4], 
+    [], 
+    [], 
+    ["USA", "China", "UK", "Russia"], 
+    ["USA", "China", "UK", "Russia"], 
+]
 # Function to generate random data
 def generate_medals_data(countries, years):
-    
     return np.random.randint(0, 100, size=(len(countries), len(years)))
 
 # Function to plot chart
@@ -83,7 +128,7 @@ def next_chart():
         chart_label.config(text=f"Current Chart: {trial}")
 
         # Update the question label
-        question_label.config(text=f"Question: Which Country has the highest number of Medals in 2012?")
+        question_label.config(text=f"{question_list[trial-1]}")
 
         # Clear user's choice
         user_choice.set("")
@@ -149,14 +194,41 @@ def check_answer(user_answer, correct_chart_type):
 
 # Function to check the highest medals for each trail
 def find_highest_medals_country(medals_data, countries, years):
-    # Converting 'years' to a list to use the 'index' method
+
     years_list = list(years)
     index_2012 = years_list.index(2012)
     medals_2012 = medals_data[:, index_2012]
     max_medals_index = np.argmax(medals_2012)
     return countries[max_medals_index]
 
+def find_lowest_medals_country():
+    years_list = list(years)
+    index_2012 = years_list.index(2012)
+    medals_2012 = medals_data[:, index_2012]
+    min_medals_index = np.argmin(medals_2012)
+    return countries[min_medals_index]
 
+def find_overall_medals_country():
+    total_medals_per_country = np.sum(medals_data, axis=1)
+    max_medal = np.argmax(total_medals_per_country)
+
+    return countries[max_medal]
+
+def find_different_medals_country():
+    years_list = list(years)
+    index_2012 = years_list.index(2012)
+    medals_2012 = medals_data[:, index_2012]
+    max_medals_index = np.argmax(medals_2012)
+    min_medals_index = np.argmin(medals_2012)
+    return max_medals_index - min_medals_index
+
+def find_china_medals_2000():
+    years_list = list(years)
+    index_2000 = years_list.index(2000)
+    medals_2000 = medals_data[:, index_2000]
+    china_index = countries.index("China")[medals_2000]
+    return china_index
+    
 def main():
     global countries, years, current_chart, trial, num_trials, next_button, chart_label, user_choice, medals_data, question_label, elapsed_label, timer_label
 
@@ -181,20 +253,21 @@ def main():
     chart_label.pack()
 
     # Create a label for the question
-    question_label = ttk.Label(root, text=f"Question: Which Country has the highest number of Medals in 2012?")
+    question_label = ttk.Label(root, text=f"{question_list[trial-1]}")
     question_label.pack()
 
     # Create radio buttons for user's choice
     user_choice = StringVar()
-    option1 = ttk.Radiobutton(root, text="USA", variable=user_choice, value="USA")
-    option2 = ttk.Radiobutton(root, text="China", variable=user_choice, value="China")
-    option3 = ttk.Radiobutton(root, text="UK", variable=user_choice, value="UK")
-    option4 = ttk.Radiobutton(root, text="Russia", variable=user_choice, value="Russia")
-    option1.pack()
-    option2.pack()
-    option3.pack()
-    option4.pack()
 
+    options = []
+    for i in range(len(multiple_choice_list[trial])):
+        options.append(ttk.Radiobutton(root, text=f"{multiple_choice_list[trial][i]}", variable=user_choice, value=f"{multiple_choice_list[trial][i]}")) 
+
+    for i in options:
+        i.pack()
+
+    options.clear()
+    
     # Create a label for elapsed time
     elapsed_label = ttk.Label(root, text="")
     elapsed_label.pack()
