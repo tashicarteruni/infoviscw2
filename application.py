@@ -37,8 +37,8 @@ question_list= [
     'How many countries had above 50 medals in 2020?',
     'what is the total number of medals won by Russia in 2004 and 2008 combined?',
     'what is the total number of medals won by Russia in 2004 and 2008 combined?',
-    'How many countries had below 50 medals in 2002?',
-    'How many countries had below 50 medals in 2002?',
+    'How many countries had below 50 medals in 2020?',
+    'How many countries had below 50 medals in 2020?',
 ]
 
 #  2000 - 2020 , ["USA", "China", "UK", "Russia"]
@@ -201,7 +201,8 @@ def record_data_to_csv(trial_number, data, countries, years, chart_type, user_an
             header = ['Trial Number', 'Chart Type', 'User Answer', 'Question Answered Correctly','Result', 'Time Taken (seconds)'] + [f'{country}_{year}' for country in countries for year in years]
             writer.writerow(header)
 
-        if user_answer == correct_answer:
+        print (type(user_answer), type(correct_answer))
+        if str(user_answer) == str(correct_answer):
             result = 'True'
         else:
             result = 'False'
@@ -212,8 +213,14 @@ def record_data_to_csv(trial_number, data, countries, years, chart_type, user_an
 
 
 # Function to check if the user's answer is correct
-def check_answer(user_answer, correct_chart_type):
-    return user_answer.lower() == correct_chart_type.lower()
+def check_answer(user_answer, correct_answer):
+
+    if user_answer.isdigit():
+        
+        return user_answer == correct_answer
+    
+    else:
+        return str(user_answer).lower()== str(correct_answer).lower()
 
 # Function to check the highest medals for each trail
 def find_highest_medals_country(medals_data, countries, years):
